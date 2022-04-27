@@ -17,7 +17,7 @@ masking = {
 	init: function () {
 		this.numberFormat = new Intl.NumberFormat();
 		for (let input of document.querySelectorAll('input, textarea, select')) {
-			input.addEventListener('blur', this.inputValid);
+			input.addEventListener('change', this.inputValid);
 			if (input.nodeName.toLowerCase() == 'select') {
 				this.setSelector(input);
 				document.addEventListener('click', (event) => {

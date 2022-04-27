@@ -5,12 +5,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	moveElements();
 	fixedHeader();
 	pageUp();
-	loadScript('libs/masking/script.js', () => { masking.init(); /*submitForm.init();*/ });
-	loadScript('libs/fancybox/script.js', () => { Fancybox.defaults.dragToClose = false; });
-	loadScript('libs/wow/script.js', () => new WOW().init());
-	loadScript('libs/carousel/script.js', initCarousel);
-	loadScript('libs/carousel/autoplay.js');
-	loadScript('http://api-maps.yandex.ru/2.1/?lang=ru_RU', setMap);
+	loadScript('libs/masking/script.js', () => { masking.init(); submitForm.init(); });
+	loadScript('libs/fancybox/script.js', () => { Fancybox.defaults.dragToClose = false; Fancybox.defaults.Hash = false; });
+	loadScript('libs/wow/script.js', () => new WOW({ offset: 100 }).init());
+	loadScript('libs/swiper/script.js', initSwiper);
+	loadScript('libs/loadPage/script.js', () => loadPage.init());
+	loadScript('https://api-maps.yandex.ru/2.1/?lang=ru_RU', setMap);
 });
 
 document.addEventListener('scroll', function (event) {
@@ -22,7 +22,7 @@ window.addEventListener('resize', function (event) {
 	moveElements();
 });
 
-function initCarousel() {
+function initSwiper() {
 }
 
 async function loadScript(src, func = false) {
@@ -114,10 +114,13 @@ function moveElements() {
 //Map
 function setMap() {
 	ymaps.ready(() => {
-		for (let mapContainer of document.querySelectorAll('.map')) {
+		maps = document.querySelectorAll('.map');
+		if (!maps) return;
+		for (let mapContainer of maps) {
 			let id = mapContainer.getAttribute('id'),
 				data = mapContainer.dataset,
 				mapCenter = JSON.parse(data.center),
+				mapCoord = data.coord ? JSON.parse(data.coord) : mapCenter,
 				mapZoom = data.zoom,
 				mapTitle = data.title,
 				map = new ymaps.Map(id, {
@@ -125,7 +128,7 @@ function setMap() {
 					zoom: mapZoom,
 					controls: ['smallMapDefaultSet']
 				}),
-				pin = new ymaps.Placemark(mapCenter, {
+				pin = new ymaps.Placemark(mapCoord, {
 					hintContent: mapTitle
 				}, {
 					iconLayout: 'default#image'
@@ -133,7 +136,13 @@ function setMap() {
 					// iconImageSize: [45, 56],
 					// iconImageOffset: [-22, -56]
 				});
+			map.behaviors.disable(['scrollZoom']);
 			map.geoObjects.add(pin);
+			setMapCenter();
+			function setMapCenter() {
+				(mapContainer.offsetWidth < 992) ? map.setCenter(mapCoord) : map.setCenter(mapCenter);
+			}
+			window.addEventListener('resize', setMapCenter);
 		}
 	});
 }
@@ -149,16 +158,16 @@ function fixedHeader() {
 		scrollPosition = window.pageYOffset,
 		fixedHeaderElement = document.getElementById('fixedHeader'),
 		fixedHeader = fixedHeaderElement ? fixedHeaderElement : header.cloneNode(true);
+	fixedHeader.setAttribute('id', 'fixedHeader');
+	fixedHeader.classList.add('fixed-header');
+	fixedHeader.classList.add('mmo-item');
+	if (!fixedHeaderElement) document.body.prepend(fixedHeader);
 	if (scrollPosition > headerHeight + offset) {
-		fixedHeader.setAttribute('id', 'fixedHeader');
-		fixedHeader.classList.add('fixed-header');
-		if (!fixedHeaderElement) document.body.prepend(fixedHeader);
 		setTimeout(() => fixedHeader.classList.add(activeClass), 0);
 	}
 	else {
 		if (!fixedHeader) return;
 		fixedHeader.classList.remove(activeClass);
-		setTimeout(() => fixedHeader.remove(), 300);
 	}
 }
 //FixedHeader
