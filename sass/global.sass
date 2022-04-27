@@ -108,45 +108,6 @@
 		&:active
 			color: var(--clr-acent-active)
 
-.burger
-	display: block
-	width: 40px
-	height: 30px
-	position: relative
-	margin-left: 50px
-	cursor: pointer
-	span, &:before, &:after
-		width: 40px
-		height: 4px
-		background: var(--clr-text)
-		display: block
-		position: absolute
-		border-radius: 5px
-		transform-origin: center
-	span
-		top: 50%
-		margin-top: -2px
-	&:before, &:after
-		content: ''
-	&:before
-		top: 0
-	&:after
-		bottom: 0
-	&.is-active
-		span
-			opacity: 0
-		&:before
-			top: 50%
-			margin-top: -2px
-		&:after
-			bottom: 50%
-			margin-bottom: -2px
-	&.is-close
-		&:before
-			transform: rotate(45deg)
-		&:after
-			transform: rotate(-45deg)
-
 .pageup
 	display: block
 	position: fixed
@@ -287,6 +248,10 @@
 .fsc
 	&-inner
 		height: 100%
+		display: flex
+		align-items: center
+		justify-content: center
+		flex-direction: column
 	&-title
 		font-weight: 700
 		font-size: 1.3em
@@ -337,35 +302,3 @@
 		transform: rotate(0)
 	100%
 		transform: rotate(360deg)
-
-.select
-	position: relative
-	&.active
-		.select
-			&-list
-				display: block
-	&-input
-		display: none !important
-	&-list
-		display: none
-		position: absolute
-		top: 100%
-		left: 0
-		right: 0
-	&-label
-		position: relative
-		display: block
-		padding: 1rem
-		border: solid 1px var(--clr-gray)
-		border-radius: var(--border-radius-btn)
-		white-space: nowrap
-		overflow: hidden
-		text-overflow: ellipsis
-	&-btn
-		cursor: pointer
-		position: absolute
-		right: 0
-		top: 0
-		bottom: 0
-		width: 3em
-		background: var(--clr-accent)
