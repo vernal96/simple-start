@@ -113,38 +113,39 @@ function moveElements() {
 
 //Map
 function setMap() {
-	ymaps.ready(() => {
-		maps = document.querySelectorAll('.map');
-		if (!maps) return;
-		for (let mapContainer of maps) {
-			let id = mapContainer.getAttribute('id'),
-				data = mapContainer.dataset,
-				mapCenter = JSON.parse(data.center),
-				mapCoord = data.coord ? JSON.parse(data.coord) : mapCenter,
-				mapZoom = data.zoom,
-				mapTitle = data.title,
-				map = new ymaps.Map(id, {
-					center: mapCenter,
-					zoom: mapZoom,
-					controls: ['smallMapDefaultSet']
-				}),
-				pin = new ymaps.Placemark(mapCoord, {
-					hintContent: mapTitle
-				}, {
-					iconLayout: 'default#image'
-					// iconImageHref: '../img/ico/map_marker.png',
-					// iconImageSize: [45, 56],
-					// iconImageOffset: [-22, -56]
-				});
-			map.behaviors.disable(['scrollZoom']);
-			map.geoObjects.add(pin);
-			setMapCenter();
-			function setMapCenter() {
-				(mapContainer.offsetWidth < 992) ? map.setCenter(mapCoord) : map.setCenter(mapCenter);
+	try {
+		ymaps.ready(() => {
+			maps = document.querySelectorAll('.map');
+			if (!maps) return;
+			for (let mapContainer of maps) {
+				let id = mapContainer.getAttribute('id'),
+					data = mapContainer.dataset,
+					mapCenter = JSON.parse(data.center),
+					mapCoord = data.coord ? JSON.parse(data.coord) : mapCenter,
+					mapZoom = data.zoom,
+					mapTitle = data.title,
+					map = new ymaps.Map(id, {
+						center: mapCenter,
+						zoom: mapZoom,
+						controls: ['smallMapDefaultSet']
+					}),
+					pin = new ymaps.Placemark(mapCoord, {
+						hintContent: mapTitle
+					}, {
+						iconLayout: 'default#image'
+					});
+				map.behaviors.disable(['scrollZoom']);
+				map.geoObjects.add(pin);
+				setMapCenter();
+				function setMapCenter() {
+					(mapContainer.offsetWidth < 992) ? map.setCenter(mapCoord) : map.setCenter(mapCenter);
+				}
+				window.addEventListener('resize', setMapCenter);
 			}
-			window.addEventListener('resize', setMapCenter);
-		}
-	});
+		});
+	} catch (e) {
+		console.log('Yandex Map is not initiated');
+	}
 }
 //Map
 

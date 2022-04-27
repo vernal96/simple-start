@@ -1,0 +1,11 @@
+@media (max-width: 575.98px) {
+  .h320 {
+    display: none;
+  }
+  .v320 {
+    display: block;
+  }
+  :root {
+    --container: 100%;
+  }
+}
