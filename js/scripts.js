@@ -190,7 +190,7 @@ function pageUp() {
 //Pageup
 
 //lazyLoad
-function lazyLoad() {
+async function lazyLoad() {
 	let images, image, srcset, position, lazyClass;
 	lazyClass = 'lazy-image';
 	images = document.querySelectorAll('img');
@@ -202,8 +202,10 @@ function lazyLoad() {
 		image.classList.add(lazyClass);
 		if ((window.innerHeight - position.top) < 0 || position.bottom < 0) continue;
 		image.srcset = srcset;
-		image.removeAttribute('data-srcset');
-		image.classList.remove(lazyClass);
+		image.onload(() => {
+			image.removeAttribute('data-srcset');
+			image.classList.remove(lazyClass);
+		});
 	}
 }
 //lazyLoad
