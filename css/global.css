@@ -308,7 +308,7 @@
 
 .modal {
   display: none;
-  width: 420px;
+  width: 30rem;
   background: #fff;
   padding: 2rem;
   cursor: default !important;
@@ -354,6 +354,20 @@
   z-index: 2;
   width: 100% !important;
   height: 100% !important;
+}
+
+.lazy-image {
+  background: #f3f1ed;
+  animation: lazyImageAnimation 5s infinite alternate-reverse;
+}
+
+@keyframes lazyImageAnimation {
+  from {
+    background: #f3f1ed;
+  }
+  to {
+    background: #ebebeb;
+  }
 }
 
 .fsc-inner {

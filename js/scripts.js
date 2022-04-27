@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 	initModalPlaceholder();
 	moveElements();
 	fixedHeader();
+	lazyLoad();
 	pageUp();
 	loadScript('libs/masking/script.js', () => { masking.init(); submitForm.init(); });
 	loadScript('libs/fancybox/script.js', () => { Fancybox.defaults.dragToClose = false; Fancybox.defaults.Hash = false; });
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 document.addEventListener('scroll', function (event) {
 	fixedHeader();
 	pageUp();
+	lazyLoad();
 });
 
 window.addEventListener('resize', function (event) {
@@ -186,3 +188,22 @@ function pageUp() {
 	else pageUpBtn.classList.remove(activeClass);
 }
 //Pageup
+
+//lazyLoad
+function lazyLoad() {
+	let images, image, srcset, position, lazyClass;
+	lazyClass = 'lazy-image';
+	images = document.querySelectorAll('img');
+	if (!images) return;
+	for (image of images) {
+		srcset = image.dataset.srcset;
+		if (!srcset || !image.srcset) continue;
+		position = image.getBoundingClientRect();
+		image.classList.add(lazyClass);
+		if ((window.innerHeight - position.top) < 0 || position.bottom < 0) continue;
+		image.srcset = srcset;
+		image.removeAttribute('data-srcset');
+		image.classList.remove(lazyClass);
+	}
+}
+//lazyLoad
