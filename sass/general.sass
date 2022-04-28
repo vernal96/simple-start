@@ -167,6 +167,16 @@ label
 			inset: 0
 			width: 100%
 			height: 100%
+	&_ll
+		background: #f3f1ed
+		animation: lazyImageAnimation 5s infinite alternate-reverse
+		img
+			opacity: 0
+@keyframes lazyImageAnimation
+	from
+		background: #f3f1ed
+	to
+		background: #ebebeb
 
 .svg
 	object-fit: contain

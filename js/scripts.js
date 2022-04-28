@@ -191,21 +191,22 @@ function pageUp() {
 
 //lazyLoad
 async function lazyLoad() {
-	let images, image, srcset, position, lazyClass;
-	lazyClass = 'lazy-image';
-	images = document.querySelectorAll('img');
+	let images, image, srcset, position, lazyClass, img;
+	lazyClass = 'img_ll';
+	images = document.querySelectorAll(`.${lazyClass}`);
 	if (!images) return;
 	for (image of images) {
-		srcset = image.dataset.srcset;
-		if (!srcset || !image.srcset) continue;
+		img = image.querySelector('img');
+		if (!img) continue;
+		srcset = img.dataset.srcset;
+		if (!srcset || !img.srcset) continue;
 		position = image.getBoundingClientRect();
-		image.classList.add(lazyClass);
 		if ((window.innerHeight - position.top) < 0 || position.bottom < 0) continue;
-		image.srcset = srcset;
-		image.onload(() => {
-			image.removeAttribute('data-srcset');
+		img.srcset = srcset;
+		img.onload = function () {
+			img.removeAttribute('data-srcset');
 			image.classList.remove(lazyClass);
-		});
+		};
 	}
 }
 //lazyLoad
