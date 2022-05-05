@@ -18,6 +18,7 @@ loadPage = {
 		let links, a;
 		if (!(links = document.querySelectorAll('a'))) return;
 		for (a of links) {
+			if (a.getAttribute('href') == null) continue;
 			if (a.getAttribute('href').match(/^#|tel:|mailto:/g) || a.dataset.fancybox == '' || a.dataset.fancybox || a.getAttribute('target') == '_blank') continue;
 			a.addEventListener('click', this.onClick);
 		}
