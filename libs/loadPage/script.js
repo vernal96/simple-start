@@ -42,6 +42,7 @@ loadPage = {
 		}
 	},
 	onClick: async function (event) {
+		if (event.ctrlKey) return;
 		if (!document.body.classList.contains('bvi-active')) {
 			event.preventDefault();
 			if (this.href != window.location.href) loadPage.prepareLoading(this.href);
