@@ -16,17 +16,14 @@ masking = {
 		selected: 'selected'
 	},
 	init: function () {
-		for (let input of document.querySelectorAll('input, textarea, select')) {
+		for ( input of document.querySelectorAll('input, textarea, select')) {
 			if (input.classList.contains(this.initClass)) continue;
 			input.addEventListener('change', this.inputValid.bind(this));
 			if (input.nodeName.toLowerCase() == 'select') {
 				this.setSelector(input);
 				document.addEventListener('click', (event) => {
-					for (let select of document.querySelectorAll(`.${this.selectorClasses.main}`)) {
-						const withinBoundaries = event.composedPath().includes(select);
-						if (!withinBoundaries) {
-							select.classList.remove(this.selectorClasses.active);
-						};
+					for (select of document.querySelectorAll(`.${this.selectorClasses.main}`)) {
+						if (!event.composedPath().includes(select)) select.classList.remove(this.selectorClasses.active);
 					}
 				});
 			}
@@ -221,19 +218,7 @@ submitForm = {
 		for (let button of form.querySelectorAll('[type=submit]')) {
 			button.disabled = true;
 		}
-
-		let response = await fetch(action, {
-			method: method,
-			body: data
-		});
-
-		if (response.ok) {
-			console.log('Успех', response);
-		}
-		else {
-			console.log('Ошибка', response)
-		}
-
+		
 		for (let button of form.querySelectorAll('[type=submit]')) {
 			button.disabled = false;
 		}

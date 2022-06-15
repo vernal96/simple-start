@@ -156,13 +156,16 @@ loadPage = {
 			}
 		}
 		for (script of newScripts) {
-			if (script.innerHTML) document.body.append(script);
-		}
-		if (typeof pdoPage == 'object') {
-			pdoPage.Reached = false;
-			pdoPage.keys = {};
-			pdoPage.callbacks = {};
-			pdoPage.configs = {};
+			if (script.innerHTML) {
+				document.body.append(script);
+				if (script.classList.contains('pdo-page-config')) {
+					pdoPage.Reached = false;
+					pdoPage.keys = {};
+					pdoPage.callbacks = {};
+					pdoPage.configs = {};
+					eval(script.innerHTML);
+				}
+			}
 		}
 	},
 	initFunctions: function () {

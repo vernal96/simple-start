@@ -1,8 +1,7 @@
-ACTIVE_CLASS = 'is-active';
+const ACTIVE_CLASS = 'is-active';
 
-document.addEventListener('DOMContentLoaded', function (event) {
+document.addEventListener('DOMContentLoaded', function () {
 	globalFunctions();
-	masking.init();
 	masking.init();
 	submitForm.init();
 	Fancybox.defaults.dragToClose = false;
@@ -22,7 +21,6 @@ document.addEventListener('scroll', function () {
 window.addEventListener('resize', function () {
 	moveElements();
 });
-
 
 //Функция вызывает все глобальные функции
 function globalFunctions() {
@@ -56,9 +54,7 @@ function checkAgree() {
 	queryElement = '[type=submit]';
 	for (agree of document.querySelectorAll(confirmElement)) {
 		parent = agree.closest(parentElement) ? agree.closest(parentElement) : agree.closest(form);
-		if (!agree.checked) {
-			for (submit of parent.querySelectorAll(queryElement)) submit.disabled = true;
-		}
+		if (!agree.checked) for (submit of parent.querySelectorAll(queryElement)) submit.disabled = true;
 		agree.addEventListener('change', setSubmitStatus)
 	}
 	function setSubmitStatus() {
@@ -71,16 +67,14 @@ function checkAgree() {
 				break;
 			}
 		}
-		for (submit of submits) {
-			submit.disabled = (formSubmitEnabled) ? false : true;
-		}
+		for (submit of submits) submit.disabled = !formSubmitEnabled;
 	}
 }
 
 // Обрабатывает якорные ссылки
 function clickAnchors() {
 	for (anchor of document.querySelectorAll('[href*="#"]')) {
-		anchor.addEventListener('click', function (event) {
+		anchor.addEventListener('click', (event) => {
 			event.preventDefault();
 			id = anchor.getAttribute('href');
 			if (id == '#') return;
@@ -102,7 +96,7 @@ function initModalPlaceholder(prefix='.modal__') {
 			try {
 				data = JSON.parse('{' + element.dataset.modalContent.replaceAll('\'', '"') + '}');
 			} catch(error) {
-				data = null;
+				data = [];
 			}
 			modalObject = document.querySelector(element.dataset.src);
 			if (!modalObject) return;
@@ -189,25 +183,23 @@ function setMap() {
 
 //делает копию шапки для фиксированной
 //основная шапка должна содержать id=mainHeader
-function fixedHeader() {
-	header = document.getElementById('mainHeader');
+function fixedHeader(headerId='mainHeader', fixedId='fixedHeader') {
+	let header = document.getElementById(headerId);
 	if (!header) return;
 	headerHeight = header.offsetHeight;
-	activeClass = ACTIVE_CLASS;
 	offset = 50;
 	scrollPosition = window.pageYOffset;
-	fixedHeaderElement = document.getElementById('fixedHeader');
+	fixedHeaderElement = document.getElementById(fixedId);
 	let fixedHeader = fixedHeaderElement ? fixedHeaderElement : header.cloneNode(true);
 	fixedHeader.setAttribute('id', 'fixedHeader');
-	fixedHeader.classList.add('fixed-header');
-	fixedHeader.classList.add('mmo-item');
+	fixedHeader.classList.add('fixed-header', 'mmo-item');
 	if (!fixedHeaderElement) document.body.prepend(fixedHeader);
 	if (scrollPosition > headerHeight + offset) {
-		setTimeout(() => fixedHeader.classList.add(activeClass), 0);
+		setTimeout(() => fixedHeader.classList.add(ACTIVE_CLASS), 0);
 	}
 	else {
 		if (!fixedHeader) return;
-		fixedHeader.classList.remove(activeClass);
+		fixedHeader.classList.remove(ACTIVE_CLASS);
 	}
 }
 
@@ -215,21 +207,18 @@ function fixedHeader() {
 function pageUp() {
 	pageUpBtn = document.getElementById('pageup');
 	topShow = 280;
-	activeClass = ACTIVE_CLASS;
 	scrollPosition = window.scrollY;
 	documentFooter = document.querySelector('footer');
 	if (!pageUpBtn) return;
 	footerHeight = documentFooter ? documentFooter.offsetHeight : 0;
-	if (scrollPosition > topShow && scrollPosition < document.body.offsetHeight - window.innerHeight - footerHeight) pageUpBtn.classList.add(activeClass);
-	else pageUpBtn.classList.remove(activeClass);
+	if (scrollPosition > topShow && scrollPosition < document.body.offsetHeight - window.innerHeight - footerHeight) pageUpBtn.classList.add(ACTIVE_CLASS);
+	else pageUpBtn.classList.remove(ACTIVE_CLASS);
 }
 
 //Ленивая загрузка фото фото должно содержать класс img_ll и data-srcset с возможными размерами
 async function lazyLoad() {
 	lazyClass = 'img_ll';
-	images = document.querySelectorAll(`.${lazyClass}`);
-	if (!images) return;
-	for (image of images) {
+	for (image of document.querySelectorAll(`.${lazyClass}`)) {
 		img = image.querySelector('img');
 		if (!img) continue;
 		srcset = img.dataset.srcset;
