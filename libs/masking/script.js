@@ -1,6 +1,7 @@
 masking = {
 	phonePosition: false,
 	numberFormat: null,
+	initClass: 'input-initialized',
 	selectorClasses: {
 		main: 'select',
 		initialized: 'select-initialized',
@@ -15,8 +16,8 @@ masking = {
 		selected: 'selected'
 	},
 	init: function () {
-		this.numberFormat = new Intl.NumberFormat();
 		for (let input of document.querySelectorAll('input, textarea, select')) {
+			if (input.classList.contains(this.initClass)) continue;
 			input.addEventListener('change', this.inputValid.bind(this));
 			if (input.nodeName.toLowerCase() == 'select') {
 				this.setSelector(input);
@@ -38,6 +39,7 @@ masking = {
 				input.old = 'number';
 				input.addEventListener('input', this.onNumericInput.bind(this));
 			}
+			input.classList.add(this.initClass);
 		}
 	},
 	setSelector: function (input) {
@@ -58,7 +60,7 @@ masking = {
 				title.prepend(option.textContent);
 				let selectBtn = document.createElement('div');
 				selectBtn.classList.add(this.selectorClasses.button);
-				selectBtn.addEventListener('click', () => {
+				label.addEventListener('click', () => {
 					if (selectric.classList.contains(this.selectorClasses.active)) {
 						selectric.classList.remove(this.selectorClasses.active);
 						return;
@@ -158,7 +160,8 @@ masking = {
 		inputNumber = inputNumber.replace(/\s/g, '');
 		if (!inputNumber.match(/\d/g)) return input.value = '';
 		if (inputNumber.indexOf('.') != inputNumber.lastIndexOf('.')) return input.value = input.value.substring(0, input.value.length - 1);
-		if (!inputNumber.match(/\.$/g)) input.value = this.numberFormat.format(inputNumber);
+		if (!inputNumber.match(/\.$/g)) input.value = inputNumber;
+		input.value = inputNumber;
 	},
 	getInputNumbersValue: function (input) {
 		return input.value.trim().replace(/\D/g, '');

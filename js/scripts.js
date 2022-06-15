@@ -1,57 +1,88 @@
+ACTIVE_CLASS = 'is-active';
+
 document.addEventListener('DOMContentLoaded', function (event) {
-	clickAnchors();
+	globalFunctions();
+	masking.init();
+	masking.init();
+	submitForm.init();
+	Fancybox.defaults.dragToClose = false;
+	Fancybox.defaults.Hash = false;
+	Fancybox.defaults.autoFocus = false;
+	new WOW({ offset: 100 }).init();
+	//loadPage.init()
+	// loadScript('https://api-maps.yandex.ru/2.1/?lang=ru_RU', setMap);
+});
+
+document.addEventListener('scroll', function () {
+	fixedHeader();
+	pageUp();
+	lazyLoad();
+});
+
+window.addEventListener('resize', function () {
+	moveElements();
+});
+
+
+//Функция вызывает все глобальные функции
+function globalFunctions() {
+	clickAnchors(); 
 	checkAgree();
 	initModalPlaceholder();
 	moveElements();
 	fixedHeader();
 	lazyLoad();
 	pageUp();
-	loadScript('libs/masking/script.js', () => { masking.init(); submitForm.init(); });
-	loadScript('libs/fancybox/script.js', () => { Fancybox.defaults.dragToClose = false; Fancybox.defaults.Hash = false; });
-	loadScript('libs/wow/script.js', () => new WOW({ offset: 100 }).init());
-	loadScript('libs/swiper/script.js', initSwiper);
-	loadScript('libs/loadPage/script.js', () => loadPage.init());
-	loadScript('https://api-maps.yandex.ru/2.1/?lang=ru_RU', setMap);
-});
+	initSwiper();
+}
 
-document.addEventListener('scroll', function (event) {
-	fixedHeader();
-	pageUp();
-	lazyLoad();
-});
-
-window.addEventListener('resize', function (event) {
-	moveElements();
-});
-
+//Инициализирует все слайдеры
 function initSwiper() {
 }
 
+//Вызвает асинхронные скрипты
 async function loadScript(src, func = false) {
-	let script = document.createElement('script');
+	script = document.createElement('script');
 	script.src = src;
 	document.body.append(script);
 	if (func) script.onload = () => func();
 }
 
+// Работает с объектами input типа checkbox, содержащими data-form-confirm. Должен быть потомком элемента .form или form, который содержит submit элементы
 function checkAgree() {
-	let confirmElement = 'input[data-form-confirm]',
-		parentElement = 'form',
-		queryElement = '[type=submit]';
-	for (let agree of document.querySelectorAll(confirmElement)) {
-		if (!agree.checked) for (let submit of agree.closest(parentElement).querySelectorAll(queryElement)) submit.disabled = true;
-		agree.addEventListener('change', function (event) {
-			if (agree.checked) for (let submit of agree.closest(parentElement).querySelectorAll(queryElement)) submit.disabled = false;
-			else for (let submit of agree.closest(parentElement).querySelectorAll(queryElement)) submit.disabled = true;
-		});
+	confirmElement = 'input[data-form-confirm]';
+	form = 'form';
+	parentElement = '.form';
+	queryElement = '[type=submit]';
+	for (agree of document.querySelectorAll(confirmElement)) {
+		parent = agree.closest(parentElement) ? agree.closest(parentElement) : agree.closest(form);
+		if (!agree.checked) {
+			for (submit of parent.querySelectorAll(queryElement)) submit.disabled = true;
+		}
+		agree.addEventListener('change', setSubmitStatus)
+	}
+	function setSubmitStatus() {
+		formSubmitEnabled = true;
+		submits = parent.querySelectorAll(queryElement);
+		for (agree of parent.querySelectorAll(confirmElement)) {
+			if (!agree.checked) {
+				formSubmitEnabled = false;
+				for (submit of submits) submit.disabled = true;
+				break;
+			}
+		}
+		for (submit of submits) {
+			submit.disabled = (formSubmitEnabled) ? false : true;
+		}
 	}
 }
 
+// Обрабатывает якорные ссылки
 function clickAnchors() {
-	for (let anchor of document.querySelectorAll('[href*="#"]')) {
+	for (anchor of document.querySelectorAll('[href*="#"]')) {
 		anchor.addEventListener('click', function (event) {
 			event.preventDefault();
-			let id = anchor.getAttribute('href');
+			id = anchor.getAttribute('href');
 			if (id == '#') return;
 			document.querySelector(id).scrollIntoView({
 				behavior: 'smooth',
@@ -61,41 +92,48 @@ function clickAnchors() {
 	}
 }
 
-//Modal
-function initModalPlaceholder() {
-	for (let modalInit of document.querySelectorAll('[data-fancybox][data-src*="#"]')) {
+//Обрабатывает контент модальных окон, которые передаются в парметре data-modal-content.
+//Пример: 'Ключ':'Значение','Ключ':'Значение'.
+//Принимает префикс класса объекта. По умолчанию .modal__
+function initModalPlaceholder(prefix='.modal__') {
+	for (modalInit of document.querySelectorAll('[data-fancybox][data-src*="#"]')) {
 		modalInit.addEventListener('click', function (event) {
-			let element = event.target,
-				prefix = '.modal__',
-				data = element.dataset,
-				modalObject = document.querySelector(data.src);
+			element = event.target;
+			try {
+				data = JSON.parse('{' + element.dataset.modalContent.replaceAll('\'', '"') + '}');
+			} catch(error) {
+				data = null;
+			}
+			modalObject = document.querySelector(element.dataset.src);
 			if (!modalObject) return;
-			for (let defaultElement of modalObject.querySelectorAll('[data-default]')) {
-				let defaultValue = defaultElement.dataset.default;
+			for (defaultElement of modalObject.querySelectorAll('[data-default]')) {
+				defaultValue = defaultElement.dataset.default;
 				if (defaultElement.nodeName.toLowerCase() == 'input') defaultElement.value = defaultValue;
 				else defaultElement.innerHTML = defaultValue;
 			}
-			for (let dataItem in data) {
-				let element = prefix + dataItem,
-					input = 'input[name="' + dataItem + '"]',
-					modalInputElement;
+			for (dataItem in data) {
+				element = prefix + dataItem;
+				input = 'input[name="' + dataItem + '"]';
 				if (modalInputElement = modalObject.querySelector(input)) modalInputElement.value = data[dataItem];
 				if (modalInputElement = modalObject.querySelector(element)) modalInputElement.innerHTML = data[dataItem];
 			}
 		});
 	}
 }
-//Modal
 
-//moveElement
+//Перемещает элементы при зменении ширины экрана
+//Объект перемещения должен содержать:
+//data-move - определяет объект
+//data-size - опредеяет ширину экрана при которой элемент будет перемещения
+//data-break - опеределеят ширину экрана при которой элемент вернется на место 
 function moveElements() {
-	for (let moveElement of document.querySelectorAll('[data-move]')) {
-		let data = moveElement.dataset,
-			windowWidth = window.innerWidth,
-			element,
-			dataSize = (data.size) ? +data.size : 576,
-			dataBreak = (data.break) ? +data.break : windowWidth - 1,
-			dataToElement = document.querySelector(data.to);
+	for (moveElement of document.querySelectorAll('[data-move]')) {
+		data = moveElement.dataset;
+		windowWidth = window.innerWidth;
+		element;
+		dataSize = (data.size) ? +data.size : 576;
+		dataBreak = (data.break) ? +data.break : windowWidth - 1;
+		dataToElement = document.querySelector(data.to);
 		if (!dataToElement) return;
 		if (windowWidth < dataSize && windowWidth > dataBreak) {
 			element = moveElement.innerHTML;
@@ -111,9 +149,8 @@ function moveElements() {
 		}
 	}
 }
-//moveElement
 
-//Map
+//Пример инициализации Yandex карты
 function setMap() {
 	try {
 		ymaps.ready(() => {
@@ -149,18 +186,18 @@ function setMap() {
 		console.log('Yandex Map is not initiated');
 	}
 }
-//Map
 
-//FixedHeader
+//делает копию шапки для фиксированной
+//основная шапка должна содержать id=mainHeader
 function fixedHeader() {
-	let header = document.getElementById('mainHeader');
+	header = document.getElementById('mainHeader');
 	if (!header) return;
-	let headerHeight = header.offsetHeight,
-		activeClass = 'is-active',
-		offset = 50,
-		scrollPosition = window.pageYOffset,
-		fixedHeaderElement = document.getElementById('fixedHeader'),
-		fixedHeader = fixedHeaderElement ? fixedHeaderElement : header.cloneNode(true);
+	headerHeight = header.offsetHeight;
+	activeClass = ACTIVE_CLASS;
+	offset = 50;
+	scrollPosition = window.pageYOffset;
+	fixedHeaderElement = document.getElementById('fixedHeader');
+	let fixedHeader = fixedHeaderElement ? fixedHeaderElement : header.cloneNode(true);
 	fixedHeader.setAttribute('id', 'fixedHeader');
 	fixedHeader.classList.add('fixed-header');
 	fixedHeader.classList.add('mmo-item');
@@ -173,25 +210,22 @@ function fixedHeader() {
 		fixedHeader.classList.remove(activeClass);
 	}
 }
-//FixedHeader
 
-//Pageup
+//Инициализирует элемент поднятия страницы
 function pageUp() {
-	let pageUpBtn = document.getElementById('pageup'),
-		topShow = 280,
-		activeClass = 'is-active',
-		scrollPosition = window.scrollY,
-		documentFooter = document.querySelector('footer');
+	pageUpBtn = document.getElementById('pageup');
+	topShow = 280;
+	activeClass = ACTIVE_CLASS;
+	scrollPosition = window.scrollY;
+	documentFooter = document.querySelector('footer');
 	if (!pageUpBtn) return;
 	footerHeight = documentFooter ? documentFooter.offsetHeight : 0;
 	if (scrollPosition > topShow && scrollPosition < document.body.offsetHeight - window.innerHeight - footerHeight) pageUpBtn.classList.add(activeClass);
 	else pageUpBtn.classList.remove(activeClass);
 }
-//Pageup
 
-//lazyLoad
+//Ленивая загрузка фото фото должно содержать класс img_ll и data-srcset с возможными размерами
 async function lazyLoad() {
-	let images, image, srcset, position, lazyClass, img;
 	lazyClass = 'img_ll';
 	images = document.querySelectorAll(`.${lazyClass}`);
 	if (!images) return;
@@ -209,4 +243,3 @@ async function lazyLoad() {
 		};
 	}
 }
-//lazyLoad

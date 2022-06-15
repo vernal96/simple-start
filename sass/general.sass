@@ -14,20 +14,9 @@ body
 	text-align: left
 	min-height: 100vh
 
-::placeholder
-	color: #737373
-
 ::selection
 	background-color: var(--clr-accent)
 	color: #fff
-
-input, textarea
-	&:focus:required:invalid
-		border-color: #f44336
-
-input, textarea
-	&:required:valid
-		border-color: #4caf50
 
 input, textarea, button, select, a
 	outline: none
@@ -71,7 +60,7 @@ p
 b, strong
 	font-weight: bold
 
-img
+img, video
 	object-fit: cover
 	object-position: center
 	vertical-align: middle
@@ -172,16 +161,12 @@ label
 		animation: lazyImageAnimation 5s infinite alternate-reverse
 		img
 			opacity: 0
+
 @keyframes lazyImageAnimation
 	from
 		background: #f3f1ed
 	to
 		background: #ebebeb
-
-.svg
-	object-fit: contain
-	width: 100% !important
-	height: 100% !important
 
 .block
 	display: block
@@ -193,7 +178,7 @@ label
 .items
 	display: flex
 	flex-wrap: wrap
-	margin: calc(var(--gap) * (0 - 1))
+	margin: calc(0px - var(--gap))
 
 .item
 	padding: var(--gap)
@@ -203,7 +188,7 @@ label
 	height: 100%
 
 .v992, .v768, .v576, .v320
-	display: none
+	display: none !important
 
 #jGrowl
 	display: none !important
@@ -222,7 +207,7 @@ label
 
 .scroll, textarea
 	&::-webkit-scrollbar
-		width: 10px
+		width: 6px
 	&::-webkit-scrollbar-track
 		background-color: darken(#fff, 20%)
 		border-radius: var(--border-radius-div)
