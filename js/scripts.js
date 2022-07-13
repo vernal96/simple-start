@@ -57,6 +57,7 @@ async function loadScript(src, func = false) {
 
 function initSvgViewBox() {
 	for (let svg of document.querySelectorAll('svg')) {
+		if (!svg.querySelector('use') || svg.getAttribute('viewBox')) continue;
 		let size = svg.getBBox(),
 			width = Math.round(size.width),
 			height = Math.round(size.height);
