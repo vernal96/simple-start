@@ -111,7 +111,7 @@ function clickAnchors() {
 function initModalPlaceholder(prefix = '.modal__') {
 	for (let modalInit of document.querySelectorAll('[data-fancybox][data-src*="#"]')) {
 		modalInit.addEventListener('click', function (event) {
-			let element = event.target,
+			let element = this,
 				data,
 				modalObject;
 			try {
