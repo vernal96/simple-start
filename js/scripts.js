@@ -1,4 +1,5 @@
 const ACTIVE_CLASS = 'is-active';
+const TEMPLATE_PATH = '/';
 
 document.addEventListener('DOMContentLoaded', function () {
 	globalFunctions();
@@ -27,9 +28,9 @@ function setFancyboxDefaults() {
 
 //Функция вызывает все глобальные функции
 function globalFunctions() {
+	initSvgViewBox();
 	clickAnchors();
 	checkAgree();
-	initSvgViewBox();
 	initModalPlaceholder();
 	moveElements();
 	fixedHeader();
@@ -56,12 +57,16 @@ async function loadScript(src, func = false) {
 }
 
 function initSvgViewBox() {
-	for (let svg of document.querySelectorAll('svg')) {
-		if (!svg.querySelector('use') || svg.getAttribute('viewBox')) continue;
-		let size = svg.getBBox(),
-			width = Math.round(size.width),
-			height = Math.round(size.height);
-		svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+	let icons = document.createElement('img');
+	icons.src = TEMPLATE_PATH + 'img/ico.svg';
+	icons.onload = function () {
+		for (let svg of document.querySelectorAll('svg')) {
+			if (!svg.querySelector('use') || svg.getAttribute('viewBox')) continue;
+			let size = svg.getBBox(),
+				width = Math.round(size.width),
+				height = Math.round(size.height);
+			svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+		}
 	}
 }
 
