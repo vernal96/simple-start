@@ -79,9 +79,9 @@ function checkAgree() {
 	for (let agree of document.querySelectorAll(confirmElement)) {
 		let parent = agree.closest(parentElement) ? agree.closest(parentElement) : agree.closest(form);
 		if (!agree.checked) for (let submit of parent.querySelectorAll(queryElement)) submit.disabled = true;
-		agree.addEventListener('change', setSubmitStatus)
+		agree.addEventListener('change', () => setSubmitStatus(parent));
 	}
-	function setSubmitStatus() {
+	function setSubmitStatus(parent) {
 		let formSubmitEnabled = true,
 			submits = parent.querySelectorAll(queryElement);
 		for (let agree of parent.querySelectorAll(confirmElement)) {
@@ -174,9 +174,7 @@ function moveElements() {
 function setMap() {
 	try {
 		ymaps.ready(() => {
-			let maps = document.querySelectorAll('.map');
-			if (!maps) return;
-			for (let mapContainer of maps) {
+			for (let mapContainer of document.querySelectorAll('.map')) {
 				let id = mapContainer.getAttribute('id'),
 					data = mapContainer.dataset,
 					mapCenter = JSON.parse(data.center),
