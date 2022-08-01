@@ -59,7 +59,8 @@ async function loadScript(src, func = false) {
 function initSvgViewBox() {
 	let icons = document.createElement('img');
 	icons.src = TEMPLATE_PATH + 'img/ico.svg';
-	icons.onload = function () {
+	icons.onload = main();
+	function main() {
 		for (let svg of document.querySelectorAll('svg')) {
 			if (!svg.querySelector('use') || svg.getAttribute('viewBox')) continue;
 			let size = svg.getBBox(),
