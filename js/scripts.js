@@ -57,10 +57,7 @@ async function loadScript(src, func = false) {
 }
 
 function initSvgViewBox() {
-	let icons = document.createElement('img');
-	icons.src = TEMPLATE_PATH + 'img/ico.svg';
-	icons.onload = main();
-	function main() {
+	window.addEventListener('load', () => {
 		for (let svg of document.querySelectorAll('svg')) {
 			if (!svg.querySelector('use') || svg.getAttribute('viewBox')) continue;
 			let size = svg.getBBox(),
@@ -68,7 +65,7 @@ function initSvgViewBox() {
 				height = Math.round(size.height);
 			svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 		}
-	}
+	});
 }
 
 // Работает с объектами input типа checkbox, содержащими data-form-confirm. Должен быть потомком элемента .form или form, который содержит submit элементы
