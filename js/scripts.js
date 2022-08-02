@@ -28,10 +28,7 @@ function setFancyboxDefaults() {
 
 //Функция вызывает все глобальные функции
 function globalFunctions() {
-	initSvgViewBox();
 	clickAnchors();
-	checkAgree();
-	initModalPlaceholder();
 	moveElements();
 	fixedHeader();
 	lazyLoad();
@@ -39,6 +36,9 @@ function globalFunctions() {
 	initSwiper();
 	masking.init();
 	submitForm.init();
+	checkAgree();
+	initModalPlaceholder();
+	initSvgViewBox();
 }
 
 //Инициализирует все слайдеры
