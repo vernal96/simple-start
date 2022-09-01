@@ -1,11 +1,18 @@
 const ACTIVE_CLASS = 'is-active';
 const TEMPLATE_PATH = '/';
 
+window.addEventListener('load', () => {
+	initSvgViewBox();
+});
+
 document.addEventListener('DOMContentLoaded', function () {
+	clickAnchors();
+	pageUp();
 	globalFunctions();
+	checkAgree();
 	setFancyboxDefaults();
+	initModalPlaceholder();
 	new WOW({ offset: 100 }).init();
-	//loadPage.init()
 	loadScript(window.location.protocol + '//api-maps.yandex.ru/2.1/?lang=ru_RU', setMap);
 });
 
@@ -19,6 +26,14 @@ window.addEventListener('resize', function () {
 	moveElements();
 });
 
+function on(event, object, func = function () { }) {
+	document.addEventListener(event, function (e) {
+		const eTarget = e.target.closest(object);
+		if (eTarget == null) return;
+		func.call(eTarget, e);
+	});
+}
+
 //Устанавливает значения по умолчанию для Fancybox
 function setFancyboxDefaults() {
 	Fancybox.defaults.dragToClose = false;
@@ -28,17 +43,8 @@ function setFancyboxDefaults() {
 
 //Функция вызывает все глобальные функции
 function globalFunctions() {
-	clickAnchors();
 	moveElements();
-	fixedHeader();
-	lazyLoad();
-	pageUp();
 	initSwiper();
-	masking.init();
-	submitForm.init();
-	checkAgree();
-	initModalPlaceholder();
-	initSvgViewBox();
 }
 
 //Инициализирует все слайдеры
@@ -57,113 +63,99 @@ async function loadScript(src, func = false) {
 }
 
 function initSvgViewBox() {
-	window.addEventListener('load', () => {
-		for (let svg of document.querySelectorAll('svg')) {
-			if (!svg.querySelector('use') || svg.getAttribute('viewBox')) continue;
-			let size = svg.getBBox(),
-				width = Math.round(size.width),
-				height = Math.round(size.height);
-			svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-		}
-	});
+	for (let svg of document.querySelectorAll('svg')) {
+		if (!svg.querySelector('use') || (svg.getAttribute('viewBox') && svg.viewBox == '0 0 0 0')) continue;
+		let size = svg.getBBox(),
+			width = Math.round(size.width),
+			height = Math.round(size.height);
+		svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+	}
 }
 
 // Работает с объектами input типа checkbox, содержащими data-form-confirm. Должен быть потомком элемента .form или form, который содержит submit элементы
 function checkAgree() {
-	let confirmElement = 'input[data-form-confirm]',
-		form = 'form',
-		parentElement = '.form',
-		queryElement = '[type=submit]';
-	for (let agree of document.querySelectorAll(confirmElement)) {
-		let parent = agree.closest(parentElement) ? agree.closest(parentElement) : agree.closest(form);
-		if (!agree.checked) for (let submit of parent.querySelectorAll(queryElement)) submit.disabled = true;
-		agree.addEventListener('change', () => setSubmitStatus(parent));
-	}
-	function setSubmitStatus(parent) {
-		let formSubmitEnabled = true,
-			submits = parent.querySelectorAll(queryElement);
-		for (let agree of parent.querySelectorAll(confirmElement)) {
+	const confirmElementDOM = 'input[data-form-confirm]',
+		formDOM = 'form',
+		parentFormElementDOM = '.form',
+		queryElementDOM = '[type=submit]';
+	for (let agree of document.querySelectorAll(confirmElementDOM)) changeAgree(agree);
+	on('change', confirmElementDOM, function (e) { changeAgree(this); });
+	function changeAgree(object) {
+		const parent = object.closest(formDOM) ? object.closest(formDOM) : object.closest(parentFormElementDOM),
+			submits = parent.querySelectorAll(queryElementDOM);
+		if (!submits) return;
+		for (let agree of parent.querySelectorAll(confirmElementDOM)) {
+			for (let submit of submits) submit.disabled = false;
 			if (!agree.checked) {
-				formSubmitEnabled = false;
 				for (let submit of submits) submit.disabled = true;
 				break;
 			}
 		}
-		for (let submit of submits) submit.disabled = !formSubmitEnabled;
 	}
 }
 
 // Обрабатывает якорные ссылки
 function clickAnchors() {
-	for (let anchor of document.querySelectorAll('[href*="#"]')) {
-		anchor.addEventListener('click', (event) => {
-			event.preventDefault();
-			let id = anchor.getAttribute('href');
-			if (id == '#') return;
-			document.querySelector(id).scrollIntoView({
-				behavior: 'smooth',
-				block: 'start'
-			});
+	on('click', 'a[href*="#"]', function (e) {
+		e.preventDefault();
+		const id = this.getAttribute('href');
+		if (id == '#') return;
+		document.getElementById(id.substr(1)).scrollIntoView({
+			behavior: 'smooth',
+			block: 'start'
 		});
-	}
+	});
 }
 
 //Обрабатывает контент модальных окон, которые передаются в парметре data-modal-content.
-//Пример: 'Ключ':'Значение','Ключ':'Значение'.
-//Принимает префикс класса объекта. По умолчанию .modal__
 function initModalPlaceholder(prefix = '.modal__') {
-	for (let modalInit of document.querySelectorAll('[data-fancybox][data-src*="#"]')) {
-		modalInit.addEventListener('click', function (event) {
-			let element = this,
-				data,
-				modalObject;
-			try {
-				data = JSON.parse('{' + element.dataset.modalContent.replaceAll('\'', '"') + '}');
-			} catch (error) {
-				data = [];
-			}
-			modalObject = document.querySelector(element.dataset.src);
-			if (!modalObject) return;
-			for (let defaultElement of modalObject.querySelectorAll('[data-default]')) {
-				let defaultValue = defaultElement.dataset.default;
-				if (defaultElement.nodeName.toLowerCase() == 'input') defaultElement.value = defaultValue;
-				else defaultElement.innerHTML = defaultValue;
-			}
-			for (let dataItem in data) {
-				let element = prefix + dataItem,
-					input = 'input[name="' + dataItem + '"]';
-				if (modalInputElement = modalObject.querySelector(input)) modalInputElement.value = data[dataItem];
-				if (modalInputElement = modalObject.querySelector(element)) modalInputElement.innerHTML = data[dataItem];
-			}
-		});
-	}
+	on('click', '[data-fancybox][data-src*="#"]', function () {
+		const element = this,
+			data,
+			modalObject;
+		try {
+			data = JSON.parse('{' + element.dataset.modalContent.replaceAll('\'', '"') + '}');
+		} catch (error) {
+			data = [];
+		}
+		modalObject = document.querySelector(element.dataset.src);
+		if (!modalObject) return;
+		for (let defaultElement of modalObject.querySelectorAll('[data-default]')) {
+			let defaultValue = defaultElement.dataset.default;
+			if (defaultElement.nodeName.toLowerCase() == 'input') defaultElement.value = defaultValue;
+			else defaultElement.innerHTML = defaultValue;
+		}
+		for (let dataItem in data) {
+			let element = prefix + dataItem,
+				input = 'input[name="' + dataItem + '"]';
+			if (modalInputElement = modalObject.querySelector(input)) modalInputElement.value = data[dataItem];
+			if (modalInputElement = modalObject.querySelector(element)) modalInputElement.innerHTML = data[dataItem];
+		}
+	})
 }
 
-//Перемещает элементы при зменении ширины экрана
-//Объект перемещения должен содержать:
-//data-move - определяет объект
-//data-size - опредеяет ширину экрана при которой элемент будет перемещения
-//data-break - опеределеят ширину экрана при которой элемент вернется на место 
 function moveElements() {
+
+	const preffix = 'movedIn';
 	for (let moveElement of document.querySelectorAll('[data-move]')) {
 		let data = moveElement.dataset,
 			windowWidth = window.innerWidth,
-			element,
-			dataSize = (data.size) ? +data.size : 576,
-			dataBreak = (data.break) ? +data.break : windowWidth - 1,
-			dataToElement = document.querySelector(data.to);
-		if (!dataToElement) return;
-		if (windowWidth < dataSize && windowWidth > dataBreak) {
-			element = moveElement.innerHTML;
-			if (!element) return;
-			moveElement.innerHTML = '';
-			dataToElement.innerHTML = element;
+			dataSize = (data.move) ? +data.move : 576,
+			dataBreak = (data.break) ? +data.break : false,
+			toElement = (data.to) ? document.getElementById(data.to) : false,
+			oldPosition = document.getElementById(preffix + data.to);
+		if (!toElement) return;
+		if (windowWidth < dataSize && !oldPosition && windowWidth >= dataBreak) {
+			let newOldPosition = document.createElement('div');
+			newOldPosition.id = preffix + data.to;
+			newOldPosition.style.display = 'none';
+			moveElement.before(newOldPosition);
+			toElement.append(moveElement);
 		}
-		else {
-			element = dataToElement.innerHTML;
-			if (!element) return;
-			dataToElement.innerHTML = '';
-			moveElement.innerHTML = element;
+		else if ((windowWidth >= dataSize || (dataBreak && dataBreak > windowWidth)) && oldPosition) {
+			if (!oldPosition) return;
+			oldPosition.after(moveElement);
+			oldPosition.remove();
 		}
 	}
 }
@@ -203,12 +195,10 @@ function setMap() {
 	}
 }
 
-//делает копию шапки для фиксированной
-//основная шапка должна содержать id=mainHeader
 function fixedHeader(headerId = 'mainHeader', fixedId = 'fixedHeader') {
-	let header = document.getElementById(headerId);
+	const header = document.getElementById(headerId);
 	if (!header) return;
-	let headerHeight = header.offsetHeight,
+	const headerHeight = header.offsetHeight,
 		offset = 50,
 		scrollPosition = window.pageYOffset,
 		fixedHeaderElement = document.getElementById(fixedId),
@@ -225,21 +215,20 @@ function fixedHeader(headerId = 'mainHeader', fixedId = 'fixedHeader') {
 	}
 }
 
-//Инициализирует элемент поднятия страницы
 function pageUp() {
-	let pageUpBtn = document.getElementById('pageup'),
+	const pageUpBtn = document.getElementById('pageup'),
 		topShow = 280,
 		scrollPosition = window.scrollY,
-		documentFooter = document.querySelector('footer');
+		documentFooter = document.querySelector('footer'),
+		footerHeight = documentFooter ? documentFooter.offsetHeight : 0;
 	if (!pageUpBtn) return;
-	let footerHeight = documentFooter ? documentFooter.offsetHeight : 0;
 	if (scrollPosition > topShow && scrollPosition < document.body.offsetHeight - window.innerHeight - footerHeight) pageUpBtn.classList.add(ACTIVE_CLASS);
 	else pageUpBtn.classList.remove(ACTIVE_CLASS);
 }
 
 //Ленивая загрузка фото фото должно содержать класс img_ll и data-srcset с возможными размерами
 async function lazyLoad() {
-	let lazyClass = 'img_ll';
+	const lazyClass = 'img_ll';
 	for (let image of document.querySelectorAll(`.${lazyClass}`)) {
 		let img = image.querySelector('img');
 		if (!img) continue;
