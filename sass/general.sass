@@ -31,6 +31,12 @@ input, textarea, button, select, a
 input, button, select
 	line-height: 1
 
+input[type="number"]
+	-moz-appearance: textfield
+	&::-webkit-outer-spin-button
+	&::-webkit-inner-spin-button
+		-webkit-appearance: none
+
 button
 	cursor: pointer
 
@@ -72,15 +78,15 @@ img, video
 		height: 100% !important
 		width: 100% !important
 
-a, button, input, textarea, .a, img, svg, tr, .btn
-	transition: all 0.3s
-
 a[href^="tel:"]
 	white-space: nowrap
 
 *
+	transition-property: transform, opacity, background-color, color
+	transition-duration: 0.3s
 	&:after, &:before
-		transition: all 0.3s
+		transition-property: transform, opacity, background-color, color
+		transition-duration: 0.3s
 
 a
 	color: var(--clr-text)

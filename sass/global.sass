@@ -185,6 +185,10 @@
 				background-position: 0 -240px
 
 .nofound
+	display: flex
+	align-items: center
+	justify-content: center
+	flex-direction: columns
 	background-color: #fff
 	height: 100vh
 	color: var(--clr-text)
@@ -205,19 +209,11 @@
 .modal
 	display: none
 	width: 30rem
+	max-width: 98%
 	background: #fff
 	padding: 2rem
 	cursor: default !important
 	border-radius: var(--border-radius-div)
-	&__header
-		margin-bottom: 1.1rem
-	&__title
-		font-weight: 700
-		font-size: 1.5em
-		margin-bottom: 0.5em
-	&__description
-		font-size: 1em
-		opacity: 0.8
 
 .form
 	position: relative
@@ -297,3 +293,70 @@
 		transform: rotate(0)
 	100%
 		transform: rotate(360deg)
+
+.selector
+	display: block
+	position: relative
+	z-index: 1
+	select
+		display: none
+	&_mobile
+		select
+			display: block !important
+			opacity: 0 !important
+			position: absolute !important
+			inset: 0 !important
+			z-index: 1
+		.selector
+			&__list
+				display: none !important
+	&.is-active
+		.selector
+			&__list
+				opacity: 1
+				visibility: visible
+	&__label
+		position: relative
+		display: flex
+		justify-content: space-between
+		align-items: center
+		z-index: 0
+		cursor: pointer
+	&__title
+		white-space: nowrap
+		overflow: hidden
+		text-overflow: ellipsis
+		&.is-disabled
+			opacity: 0.7
+	&__btn
+		display: flex
+		align-items: center
+		justify-content: center
+	&__list
+		top: 100%
+		position: absolute
+		opacity: 0
+		visibility: hidden
+		z-index: 20
+	&__option
+		cursor: pointer
+		&.is-disabled
+			display: none
+
+.btn
+	display: inline-block
+	cursor: pointer
+	position: relative
+	line-height: 0
+	overflow: hidden
+	white-space: nowrap
+	text-overflow: ellipsis
+	>span
+		display: flex
+		align-items: center
+		z-index: 1
+	&_full
+		width: 100%
+	&:disabled
+		opacity: 0.7
+		cursor: pointer
