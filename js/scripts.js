@@ -1,6 +1,5 @@
 const ACTIVE_CLASS = 'is-active';
 const TEMPLATE_PATH = '/';
-const ACTION_PAGE = 'ie.html';
 
 window.addEventListener('load', () => {
 	initSvgViewBox();
