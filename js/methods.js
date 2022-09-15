@@ -339,10 +339,45 @@ function setCustomSelect() {
 				list.append(optionDOM);
 				optionDOM.addEventListener('click', function (e) {
 					if (this.classList.contains(disabledClass)) return;
+					this.closest(`.${mainClass}`).classList.remove(activeClass);
 					select.value = this.dataset.value;
 					select.dispatchEvent(new Event('change'))
 				});
 			}
 		}
 	}
+}
+
+function getCookie(key = false) {
+	let cookies = [];
+	for (let cookie of document.cookie.split(';')) {
+		cookie = cookie.split('=');
+		cookies[decodeURIComponent(cookie[0]).trim()] = decodeURIComponent(cookie[1]);
+	}
+	return (!key) ? cookies : cookies[key];
+}
+
+function setCooke(name, value, options) {
+	options = {
+		path: '/',
+		samesite: 'lax'
+	};
+	if (options.expires instanceof Date) {
+		options.expires = options.expires.toUTCString();
+	}
+	let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+	for (let optionKey in options) {
+		updatedCookie += "; " + optionKey;
+		let optionValue = options[optionKey];
+		if (optionValue !== true) {
+			updatedCookie += "=" + optionValue;
+		}
+	}
+	document.cookie = updatedCookie;
+}
+
+function deleteCookie(name) {
+	setCookie(name, "", {
+		'max-age': -1
+	});
 }

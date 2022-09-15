@@ -9,7 +9,7 @@ body
 	min-width: 320px
 	position: relative
 	overflow-x: hidden
-	width: 100vw
+	width: 100%
 	margin: 0
 	text-align: left
 	min-height: 100vh
@@ -81,11 +81,11 @@ img, video
 a[href^="tel:"]
 	white-space: nowrap
 
-*
-	transition-property: transform, opacity, background-color, color
+a, button, img, input, textarea, svg, tr, td, th
+	transition-property: transform, opacity, background-color, color, box-shadow
 	transition-duration: 0.3s
 	&:after, &:before
-		transition-property: transform, opacity, background-color, color
+		transition-property: transform, opacity, background-color, color, box-shadow
 		transition-duration: 0.3s
 
 a
@@ -139,6 +139,11 @@ label
 		z-index: 2
 		inset: 0
 		opacity: 0
+	&_contain
+		img, svg
+			width: 100%
+			height: 100%
+			object-fit: contain
 	&_height
 		img, svg
 			width: auto
