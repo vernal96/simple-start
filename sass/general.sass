@@ -81,12 +81,8 @@ img, video
 a[href^="tel:"]
 	white-space: nowrap
 
-a, button, img, input, textarea, svg, tr, td, th
-	transition-property: transform, opacity, background-color, color, box-shadow
-	transition-duration: 0.3s
-	&:after, &:before
-		transition-property: transform, opacity, background-color, color, box-shadow
-		transition-duration: 0.3s
+a:not([href])
+	cursor: default
 
 a
 	color: var(--clr-text)
@@ -132,13 +128,7 @@ label
 		width: 100%
 		height: auto
 		margin: 0 auto
-	&:before
-		content: ''
-		display: block
-		position: absolute
-		z-index: 2
-		inset: 0
-		opacity: 0
+		transition: opacity 0.3s
 	&_contain
 		img, svg
 			width: 100%

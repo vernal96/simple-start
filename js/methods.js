@@ -49,11 +49,11 @@ function checkAgree() {
 
 //Ссылка по якорям
 function clickAnchors() {
-	on('click', 'a[href*="#"]', function (e) {
+	on('click', 'a[href^="#"]', function (e) {
 		e.preventDefault();
-		const id = this.getAttribute('href');
-		if (id == '#') return;
-		document.getElementById(id.substr(1)).scrollIntoView({
+		const element = document.getElementById(this.getAttribute('href').substr(1));
+		if (!element) return;
+		element.scrollIntoView({
 			behavior: 'smooth',
 			block: 'start'
 		});
@@ -357,7 +357,7 @@ function getCookie(key = false) {
 	return (!key) ? cookies : cookies[key];
 }
 
-function setCooke(name, value, options) {
+function setCookie(name, value, options) {
 	options = {
 		path: '/',
 		samesite: 'lax'
