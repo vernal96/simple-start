@@ -382,7 +382,7 @@ function deleteCookie(name) {
 	});
 }
 
-
+// 1 - функция до 2 - функция после 3 - элементы с изменяющимся контентом 4- массив с элементами и атрибутами
 function fastLoadPage(functionBefore = function () { }, functionSuccess = function () { }, changeElementsContent = [], cahngeAttributes = []) {
 	const pageLoadClass = 'page-is-loading',
 		pageLoader = document.createElement('div');
