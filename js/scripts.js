@@ -6,6 +6,7 @@ window.addEventListener('load', () => {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
+	fastLoadPage();
 	clickAnchors();
 	pageUp();
 	globalFunctions();
