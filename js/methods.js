@@ -427,47 +427,51 @@ function fastLoadPage(functionBefore = function () { }, functionSuccess = functi
 	});
 
 	function loadPage(href, writeHistory = true) {
-		const pageIsLoading = document.createElement('div');
-		css(pageIsLoading, { position: 'fixed', inset: '0', zIndex: '9999999' });
-		document.body.append(pageIsLoading);
-		document.body.classList.add(pageLoadClass);
-		functionBefore.call(this);
-		fetch(href)
-			.then(response => response.text())
-			.then(newContent => {
-				const newDocumentElement = document.createElement('html');
-				newDocumentElement.innerHTML = newContent;
-				const newDOM = document.implementation.createHTMLDocument();
-				newDOM.head.innerHTML = newDocumentElement.querySelector('head').innerHTML;
-				newDOM.body.innerHTML = newDocumentElement.querySelector('body').innerHTML;
-				for (let item of cahngeAttributes) {
-					for (let oldElement of document.querySelectorAll(item.element)) {
-						let newElement = newDOM.querySelector(item.element);
-						if (!newElement) continue;
-						oldElement.setAttribute(item.attribute, newElement.getAttribute(item.attribute));
+		try {
+			const pageIsLoading = document.createElement('div');
+			css(pageIsLoading, { position: 'fixed', inset: '0', zIndex: '9999999' });
+			document.body.append(pageIsLoading);
+			document.body.classList.add(pageLoadClass);
+			functionBefore.call(this);
+			fetch(href)
+				.then(response => response.text())
+				.then(newContent => {
+					const newDocumentElement = document.createElement('html');
+					newDocumentElement.innerHTML = newContent;
+					const newDOM = document.implementation.createHTMLDocument();
+					newDOM.head.innerHTML = newDocumentElement.querySelector('head').innerHTML;
+					newDOM.body.innerHTML = newDocumentElement.querySelector('body').innerHTML;
+					for (let item of cahngeAttributes) {
+						for (let oldElement of document.querySelectorAll(item.element)) {
+							let newElement = newDOM.querySelector(item.element);
+							if (!newElement) continue;
+							oldElement.setAttribute(item.attribute, newElement.getAttribute(item.attribute));
+						}
 					}
-				}
-				changedContent = false;
-				for (let item of changeElementsContent) {
-					let oldElement = document.querySelector(item),
-						newElement = newDOM.querySelector(item);
-					if (!oldElement || !newElement) continue;
-					oldElement.innerHTML = newElement.innerHTML;
-					changedContent = true;
-				}
-				if (!changedContent) {
-					window.location.href = href;
-					return;
-				}
-				if (writeHistory) {
-					window.history.replaceState(null, document.title, window.location.href)
-					window.history.pushState(null, newDOM.title, href);
-				}
-				document.title = newDOM.title;
-				globalFunctions();
-				functionSuccess.call(this, newDOM);
-				pageIsLoading.remove();
-				document.body.classList.remove(pageLoadClass);
-			});
+					changedContent = false;
+					for (let item of changeElementsContent) {
+						let oldElement = document.querySelector(item),
+							newElement = newDOM.querySelector(item);
+						if (!oldElement || !newElement) continue;
+						oldElement.innerHTML = newElement.innerHTML;
+						changedContent = true;
+					}
+					if (!changedContent) {
+						window.location.href = href;
+						return;
+					}
+					if (writeHistory) {
+						window.history.replaceState(null, document.title, window.location.href)
+						window.history.pushState(null, newDOM.title, href);
+					}
+					document.title = newDOM.title;
+					globalFunctions();
+					functionSuccess.call(this, newDOM);
+					pageIsLoading.remove();
+					document.body.classList.remove(pageLoadClass);
+				});
+		} catch (error) {
+			window.location.href = href;
+		}
 	}
 }
