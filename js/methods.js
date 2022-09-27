@@ -475,3 +475,17 @@ function fastLoadPage(functionBefore = function () { }, functionSuccess = functi
 		}
 	}
 }
+
+function isMobile() {
+	return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) ? true : false;
+}
+
+function initViberLink() {
+	if (!isMobile()) return;
+	const viberLink = document.querySelector('a[href^="viber://"]');
+	if (viberLink) {
+		const url = new URL(viberLink.href),
+			number = url.searchParams.get('number').replace(/\D/, '');
+		if (number) viberLink.href = `viber://add?number=${number}`;
+	}
+}

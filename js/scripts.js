@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	checkAgree();
 	setFancyboxDefaults();
 	initModalPlaceholder();
+	initViberLink();
 	new WOW({ offset: 100 }).init();
 	loadScript(window.location.protocol + '//api-maps.yandex.ru/2.1/?lang=ru_RU', setMap);
 });
