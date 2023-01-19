@@ -1,0 +1,14 @@
+:root {
+  --clr-accent: #FFC633;
+  --clr-text: #333;
+  --clr-wrapper: #fff;
+  --clr-gray: #E5E5E5;
+  --font: Nunito, sans-serif;
+  --border-radius: 0;
+  --font-size: 16px;
+  --gap: 0.9em;
+  --container: 1140px;
+  --overflow-wrapper: hidden;
+  --hover-brightness: 0.9;
+  --active-brightness: 0.8;
+}

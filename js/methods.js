@@ -15,16 +15,6 @@ async function loadScript(src, func = false) {
 	if (func) script.onload = () => func();
 }
 
-function initSvgViewBox() {
-	for (let svg of document.querySelectorAll('svg')) {
-		if (!svg.querySelector('use') || (svg.getAttribute('viewBox') && svg.viewBox == '0 0 0 0')) continue;
-		let size = svg.getBBox(),
-			width = Math.round(size.width),
-			height = Math.round(size.height);
-		svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-	}
-}
-
 // Работает с объектами input типа checkbox, содержащими data-form-confirm. Должен быть потомком элемента .form или form, который содержит submit элементы
 function checkAgree() {
 	const confirmElementDOM = 'input[data-form-confirm]',
@@ -245,6 +235,7 @@ const INPUT_IGNORE = 'input-ignore';
 function setPhonesMask() {
 	for (let phone of document.querySelectorAll(`input[type="tel"]:not(.${INPUT_INIT}):not(.${INPUT_IGNORE})`)) {
 		phone.addEventListener('keydown', function (e) {
+			if (e.key == undefined) return;
 			if (['Delete', 'Backspace', 'Enter'].includes(e.key) || e.key.match(/^arrow/i)) return;
 			if (!e.altKey && !e.ctrlKey && !e.shiftKey && e.key.match(/\D/)) e.preventDefault();
 		});
@@ -420,6 +411,7 @@ function fastLoadPage(functionBefore = function () { }, functionSuccess = functi
 	onpopstate = (e) => loadPage(e.target.location.href, false);
 
 	on('click', 'a[href]', function (e) {
+		if (e.ctrlKey === true) return;
 		const href = this.getAttribute('href').split('?')[0];
 		if (this.target || !href || href.match(/^\/?(#|mailto:|tel:|javascript;|http|https|ftp)/i) || (href.match(/\.\w+$/i) && !href.match(/\.(html|htm|php)$/i))) return;
 		e.preventDefault();

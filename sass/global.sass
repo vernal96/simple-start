@@ -1,36 +1,36 @@
-.text
-	line-height: 1.65
+.text-content
 	max-width: 100%
 	overflow: hidden
+	line-height: 1.65
 	>*:first-child
 		margin-top: 0
 	>*:last-child
 		margin-bottom: 0
 	h1,h2,h3,h4,h5,h6
-		line-height: 1.3
-		font-weight: 700
 		margin-bottom: 0.7em
+		font-weight: 600
+		line-height: 1.3
 	h1
-		font-size: 2.5em
+		font-size: 2em
 	h2
-		font-size: 2.1em
-	h3
 		font-size: 1.8em
-	h4
+	h3
 		font-size: 1.6em
-	h5
-		font-size: 1.5em
-	h6
+	h4
 		font-size: 1.4em
+	h5
+		font-size: 1.2em
+	h6
+		font-size: 1em
 	h2,h3,h4
 		margin-top: 1em
 		&:not(:first-child)
 			margin-top: 1.3em
 	hr
-		border: none
 		display: block
 		height: 2px
 		margin: 1.5rem 0
+		border: none
 		background: var(--clr-gray)
 	p, >ul, >ol, q, blockquote, table, img, iframe
 		margin-bottom: 1.5rem
@@ -55,36 +55,36 @@
 		&+li
 			margin-top: 0.2em
 	blockquote
-		font-style: italic
 		position: relative
+		margin-top: 0
+		margin-right: 0
+		margin-left: 0
 		padding: 1em 0 1em 2em
 		border-left: solid 3px var(--clr-accent)
-		margin-left: 0
-		margin-right: 0
-		margin-top: 0
+		font-style: italic
 		>*
 			&:last-child
 				margin-bottom: 0 !important
 	table
 		width: 100% !important
-		border-collapse: collapse
-		border-spacing: 0
+		border-radius: var(--border-radius)
 		overflow: hidden
-		border-radius: var(--border-radius-div)
+		border-spacing: 0
+		border-collapse: collapse
 		&.price
 			td
 				&:last-child
 					white-space: nowrap
 	td, th
-		padding: .8em 1.2em
-		vertical-align: top
 		width: auto !important
 		height: auto !important
+		padding: .8em 1.2em
 		border: 0 !important
+		vertical-align: top
 	th
-		background: var(--clr-accent)
 		color: #fff
 		font-weight: 600
+		background: var(--clr-accent)
 	tr
 		height: auto !important
 		transition: background-color 0.3s
@@ -107,55 +107,17 @@
 		margin-left: 2rem
 	a
 		color: var(--clr-accent)
-		transition: color 0.3s
+		transition: filter 0.3s
 		&:hover
-			color: var(--clr-accent-hover)
+			filter: brightness(var(--hover-brightness))
 		&:active
-			color: var(--clr-accent-active)
-
-.pageup
-	display: block
-	position: fixed
-	bottom: 3vw
-	right: 3vw
-	width: 3rem
-	height: 3rem
-	background: var(--clr-accent)
-	border: solid 2px #fff
-	opacity: 0
-	border-radius: 50%
-	visibility: hidden
-	z-index: 90
-	cursor: pointer
-	transition: background-color 0.3s
-	&.is-active
-		opacity: 1
-		visibility: visible
-		bottom: 4.6vw
-	&:hover
-		background: var(--clr-accent-hover)
-	&:active
-		background: var(--clr-accent-active)
-	&:before
-		content: ''
-		display: block
-		position: absolute
-		width: 1em
-		height: 1em
-		left: 50%
-		top: 50%
-		margin-left: -0.5em
-		margin-top: -0.3em
-		border-left: solid 0.19em #fff
-		border-top: solid 0.19em #fff
-		transform-origin: center
-		transform: rotate(45deg)
+			filter: brightness(var(--active-brightness))
 
 .away
-	background: #fff
-	text-align: center
 	padding: 20px 20px 35px
 	line-height: 160%
+	text-align: center
+	background: #fff
 	&-wrapper
 		margin: 50px auto
 	&__header
@@ -164,12 +126,12 @@
 	&__browsers
 		padding: 20px 24px
 	&__browser
-		padding: 20px 20px 15px
-		margin: 0 10px
 		display: inline-block
+		margin: 0 10px
+		padding: 20px 20px 15px
+		border-radius: 4px
 		font-weight: 500
 		font-size: 14px
-		border-radius: 4px
 		transition: background-color 0.3s
 		&:hover
 			background: darken(#fff, 2%)
@@ -188,36 +150,86 @@
 			&.opera
 				background-position: 0 -240px
 
-.nofound
+.error-page
 	display: flex
-	align-items: center
-	justify-content: center
-	flex-direction: columns
-	background-color: #fff
-	height: 100vh
-	color: var(--clr-text)
-	padding: 1rem
-	text-align: center
-	line-height: 1
-	position: relative
 	z-index: 9999999999
+	position: relative
+	flex-direction: column
+	justify-content: center
+	align-items: center
+	height: 100vh
+	padding: 1rem
+	color: var(--clr-text)
+	line-height: 1
+	text-align: center
+	background-color: #fff
 	&__title
-		font-weight: bold
-		font-size: 120px
-		margin-bottom: 30px
+		margin-bottom: 1.8rem
 		color: var(--clr-accent)
-	&__desc
+		font-weight: bold
+		font-size: min(7.5em, 16vw)
+	&__description
 		font-weight: 500
-		font-size: 26px
+		font-size: min(1.6em, 6vw)
+
+.pageup
+	display: block
+	opacity: 0
+	visibility: hidden
+	overflow: hidden
+	z-index: 90
+	position: fixed
+	right: 3vw
+	bottom: 3vw
+	width: 3rem
+	height: 3rem
+	border-radius: 50%
+	cursor: pointer
+	background: var(--clr-accent)
+	transition: opacity 0.3s, visibility 0.3s, bottom 0.3s
+	&:hover
+		&::after
+			opacity: 0.08
+	&:active
+		&::after
+			opacity: 0.1
+	&.is-active
+		opacity: 1
+		visibility: visible
+		bottom: 4.6vw
+	&::after
+		display: block
+		opacity: 0
+		z-index: 0
+		position: absolute
+		content: ''
+		background: #000
+		transition: opacity 0.3s
+		inset: 0
+	&:before
+		display: block
+		z-index: 1
+		position: absolute
+		top: 50%
+		left: 50%
+		width: 1em
+		height: 1em
+		margin-top: -0.3em
+		margin-left: -0.5em
+		border-top: solid 0.19em #fff
+		border-left: solid 0.19em #fff
+		content: ''
+		transform: rotate(45deg)
+		transform-origin: center
 
 .modal
 	display: none
 	width: 30rem
 	max-width: 98%
-	background: #fff
 	padding: 2rem
-	cursor: default !important
 	border-radius: var(--border-radius-div)
+	cursor: default !important
+	background: #fff
 
 .form
 	position: relative
@@ -240,63 +252,49 @@
 		width: 100% !important
 		height: 100% !important
 
-.fsc
-	&-inner
-		height: 100%
-		display: flex
-		align-items: center
-		justify-content: center
-		flex-direction: column
-	&-title
+.success
+	display: flex
+	flex-direction: column
+	justify-content: center
+	text-align: center
+	align-items: center
+	height: 100%
+	grid-gap: 1.25em
+	&_horizontal
+		flex-direction: row
+		text-align: left
+		.checkmark
+			width: 5em
+			height: 5em
+	&__title
+		margin-bottom: 0.2em
 		font-weight: 700
 		font-size: 1.4em
-		margin-bottom: 0.2em
-	&-desc
+	&__description
 		font-size: 0.9em
 
 .checkmark
+	display: block
 	width: 6em
 	height: 6em
 	border-radius: 50%
-	display: block
+	animation: checkmark_fill 0.4s ease-in-out 0.4s forwards, checkmark_scale 0.3s ease-in-out 0.9s both
 	stroke-width: 3
 	stroke: #fff
 	stroke-miterlimit: 10
-	margin: 0 auto 1.25em
-	animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both
 	&__circle
+		animation: checkmark_stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards
 		stroke-dasharray: 166
 		stroke-dashoffset: 166
 		stroke-width: 2
 		stroke-miterlimit: 10
 		stroke: var(--clr-accent)
 		fill: none
-		animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards
 	&__check
+		animation: checkmark_stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards
 		transform-origin: 50% 50%
 		stroke-dasharray: 48
 		stroke-dashoffset: 48
-		animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards
-
-@keyframes fill
-	100%
-		box-shadow: inset 0 0 0 6em var(--clr-accent)
-
-@keyframes stroke
-	100%
-		stroke-dashoffset: 0
-
-@keyframes scale
-	0%, 100%
-		transform: none
-	50%
-		transform: scale3d(1.1, 1.1, 1)
-
-@keyframes roll
-	0%
-		transform: rotate(0)
-	100%
-		transform: rotate(360deg)
 
 .selector
 	display: block
@@ -349,18 +347,36 @@
 
 .btn
 	display: inline-block
-	cursor: pointer
 	position: relative
-	line-height: 0
 	overflow: hidden
-	white-space: nowrap
+	color: #fff
+	line-height: 1
+	text-align: center
 	text-overflow: ellipsis
+	vertical-align: middle
+	white-space: nowrap
+	cursor: pointer
+	background: var(--clr-accent)
+	&:hover
+		&::before
+			opacity: 0.05
+	&::before
+		display: block
+		opacity: 0
+		z-index: 0
+		position: absolute
+		content: ''
+		background: var(--clr-text)
+		transition: opacity 0.3s
+		inset: 0
 	>span
 		display: flex
-		align-items: center
 		z-index: 1
+		position: relative
+		justify-content: center
+		align-items: center
 	&_full
 		width: 100%
 	&:disabled
 		opacity: 0.7
-		cursor: pointer
+		cursor: default

@@ -1,10 +1,6 @@
 const ACTIVE_CLASS = 'is-active';
 const TEMPLATE_PATH = '/';
 
-window.addEventListener('load', () => {
-	initSvgViewBox();
-});
-
 document.addEventListener('DOMContentLoaded', function () {
 	fastLoadPage();
 	clickAnchors();
@@ -46,36 +42,36 @@ function globalFunctions() {
 	setCustomSelect();
 }
 
-function setMap() {
-	try {
-		ymaps.ready(() => {
-			for (let mapContainer of document.querySelectorAll('.map')) {
-				let id = mapContainer.getAttribute('id'),
-					data = mapContainer.dataset,
-					mapCenter = JSON.parse(data.center),
-					mapCoord = data.coord ? JSON.parse(data.coord) : mapCenter,
-					mapZoom = data.zoom,
-					mapTitle = data.title,
-					map = new ymaps.Map(id, {
-						center: mapCenter,
-						zoom: mapZoom,
-						controls: ['smallMapDefaultSet']
-					}),
-					pin = new ymaps.Placemark(mapCoord, {
-						hintContent: mapTitle
-					}, {
-						iconLayout: 'default#image'
-					});
-				map.behaviors.disable(['scrollZoom']);
-				map.geoObjects.add(pin);
-				setMapCenter();
-				function setMapCenter() {
-					(mapContainer.offsetWidth < 992) ? map.setCenter(mapCoord) : map.setCenter(mapCenter);
-				}
-				window.addEventListener('resize', setMapCenter);
-			}
-		});
-	} catch (e) {
-		console.log('Yandex Map is not initiated');
-	}
-}
+// function setMap() {
+// 	try {
+// 		ymaps.ready(() => {
+// 			for (let mapContainer of document.querySelectorAll('.map')) {
+// 				let id = mapContainer.getAttribute('id'),
+// 					data = mapContainer.dataset,
+// 					mapCenter = JSON.parse(data.center),
+// 					mapCoord = data.coord ? JSON.parse(data.coord) : mapCenter,
+// 					mapZoom = data.zoom,
+// 					mapTitle = data.title,
+// 					map = new ymaps.Map(id, {
+// 						center: mapCenter,
+// 						zoom: mapZoom,
+// 						controls: ['zoomControl', 'fullscreenControl', 'typeSelector', 'trafficControl', 'geolocationControl']
+// 					}),
+// 					pin = new ymaps.Placemark(mapCoord, {
+// 						hintContent: mapTitle
+// 					}, {
+// 						iconLayout: 'default#image'
+// 					});
+// 				map.behaviors.disable(['scrollZoom']);
+// 				map.geoObjects.add(pin);
+// 				setMapCenter();
+// 				function setMapCenter() {
+// 					(mapContainer.offsetWidth < 992) ? map.setCenter(mapCoord) : map.setCenter(mapCenter);
+// 				}
+// 				window.addEventListener('resize', setMapCenter);
+// 			}
+// 		});
+// 	} catch (e) {
+// 		console.log('Yandex Map is not initiated');
+// 	}
+// }
