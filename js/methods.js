@@ -141,7 +141,7 @@ function css(element, css) {
 
 // Клик вне блока 
 
-function outsieClick(element, func) {
+function outsideClick(element, func) {
 	element = (typeof (element) == 'string') ? document.querySelector(element) : element;
 
 	document.addEventListener('click', (e) => {
@@ -348,11 +348,10 @@ function getCookie(key = false) {
 	return (!key) ? cookies : cookies[key];
 }
 
-function setCookie(name, value, options) {
-	options = {
-		path: '/',
-		samesite: 'lax'
-	};
+function setCookie(name, value, options = {}) {
+	if (!options.path) options.path = '/';
+	if (!options.samesite) options.samesite = 'lax';
+	console.log(options);
 	if (options.expires instanceof Date) {
 		options.expires = options.expires.toUTCString();
 	}
@@ -480,4 +479,25 @@ function initViberLink() {
 			number = url.searchParams.get('number').replace(/\D/, '');
 		if (number) viberLink.href = `viber://add?number=${number}`;
 	}
+}
+
+function createStructure(element) {
+	const type = element.type ? element.type : "div",
+		classes = element.classes,
+		children = element.children,
+		content = element.content,
+		inner = element.inner,
+		data = element.data,
+		variable = element.variable,
+		newElement = document.createElement(type);
+	if (classes) {
+		if (typeof classes == "string") newElement.setAttribute("class", classes.trim());
+		else classes.forEach(cls => newElement.classList.add(cls));
+	}
+	if (content) newElement.textContent = content;
+	if (inner) newElement.innerHTML = inner;
+	if (data) for (var dataElement in data) newElement.dataset[dataElement] = data[dataElement];
+	if (children) children.forEach(child => newElement.append(createStructure(child)));
+	if (variable) window[variable] = newElement;
+	return newElement;
 }

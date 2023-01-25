@@ -1,0 +1,108 @@
+.away
+	padding: 20px 20px 35px
+	line-height: 160%
+	text-align: center
+	background: #fff
+	&-wrapper
+		margin: 50px auto
+	&__header
+		margin-bottom: 7px
+		font-weight: 700
+	&__browsers
+		padding: 20px 24px
+	&__browser
+		display: inline-block
+		margin: 0 10px
+		padding: 20px 20px 15px
+		border-radius: 4px
+		font-weight: 500
+		font-size: 14px
+		transition: background-color 0.3s
+		&:hover
+			background: darken(#fff, 2%)
+		&-ico
+			display: block
+			margin-bottom: 10px
+			width: 80px
+			height: 80px
+			background-image: url(../img/browsers.png)
+			&.atom
+				background-position: 0 -400px
+			&.chrome
+				background-position: 0 -160px
+			&.firefox
+				background-position: 0 -80px
+			&.opera
+				background-position: 0 -240px
+
+.error-page
+	display: flex
+	z-index: 9999999999
+	position: relative
+	flex-direction: column
+	justify-content: center
+	align-items: center
+	height: 100vh
+	padding: 1rem
+	color: var(--clr-text)
+	line-height: 1
+	text-align: center
+	background-color: #fff
+	&__title
+		margin-bottom: 1.8rem
+		color: var(--clr-accent)
+		font-weight: bold
+		font-size: min(7.5em, 16vw)
+	&__description
+		font-weight: 500
+		font-size: min(1.6em, 6vw)
+
+.pageup
+	display: block
+	opacity: 0
+	visibility: hidden
+	overflow: hidden
+	z-index: 90
+	position: fixed
+	right: 3vw
+	bottom: 3vw
+	width: 3rem
+	height: 3rem
+	border-radius: 50%
+	cursor: pointer
+	background: var(--clr-accent)
+	transition: opacity 0.3s, visibility 0.3s, bottom 0.3s
+	&:hover
+		&::after
+			opacity: 0.08
+	&:active
+		&::after
+			opacity: 0.1
+	&.is-active
+		opacity: 1
+		visibility: visible
+		bottom: 4.6vw
+	&::after
+		display: block
+		opacity: 0
+		z-index: 0
+		position: absolute
+		content: ''
+		background: #000
+		transition: opacity 0.3s
+		inset: 0
+	&:before
+		display: block
+		z-index: 1
+		position: absolute
+		top: 50%
+		left: 50%
+		width: 1em
+		height: 1em
+		margin-top: -0.3em
+		margin-left: -0.5em
+		border-top: solid 0.19em #fff
+		border-left: solid 0.19em #fff
+		content: ''
+		transform: rotate(45deg)
+		transform-origin: center
